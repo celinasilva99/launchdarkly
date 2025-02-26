@@ -13,6 +13,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Grant execution permission for deploy.sh
+        run: chmod +x deploy.sh
+
       - name: Set up environment variables
         run: |
           echo "LD_PROJECT_KEY=${{ secrets.PROJECT_KEY }}" >> $GITHUB_ENV
@@ -24,9 +27,6 @@ jobs:
           LD_ACCESS_TOKEN: ${{ secrets.LAUNCHDARKLY_API_KEY }}
           LD_PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
           LD_FEATURE_FLAG_KEY: ${{ secrets.FEATURE_FLAG_KEY }}
-        
-      - name: Grant execution permission for deploy.sh
-        run: chmod +x deploy.sh
 
       - name: Run Deployment Script
         run: ./deploy.sh
