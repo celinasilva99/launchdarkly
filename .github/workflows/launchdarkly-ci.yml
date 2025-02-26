@@ -12,9 +12,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+        
+      - name: Grant execution permission for deploy.sh
+        run: chmod +x deploy.sh
 
-      - name: Deploy Application
-        run: ./deploy.sh  # Replace with your deployment script
+      - name: Run Deployment Script
+        run: ./deploy.sh
+
 
       - name: Enable Feature in LaunchDarkly
         run: |
