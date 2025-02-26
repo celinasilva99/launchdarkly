@@ -30,7 +30,8 @@ jobs:
 
       - name: Enable Feature in LaunchDarkly
         run: |
-          curl -X PATCH "https://app.launchdarkly.com/api/v2/flags/${{ secrets.PROJECT_KEY }}/${{ secrets.FEATURE_FLAG_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.LAUNCHDARKLY_API_KEY }}" \
+          curl -X PATCH "https://app.launchdarkly.com/api/v2/flags/{PROJECT_KEY}/{FEATURE_FLAG_KEY}" \
+          -H "Authorization: Bearer {YOUR_LAUNCHDARKLY_API_KEY}" \
           -H "Content-Type: application/json" \
           -d '{"on": true}'
+
