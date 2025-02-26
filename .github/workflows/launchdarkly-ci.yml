@@ -28,10 +28,6 @@ jobs:
           LD_PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
           LD_FEATURE_FLAG_KEY: ${{ secrets.FEATURE_FLAG_KEY }}
 
-      - name: Run Deployment Script
-        run: ./deploy.sh
-
-
       - name: Enable Feature in LaunchDarkly
         run: |
           curl -X PATCH "https://app.launchdarkly.com/api/v2/flags/${{ secrets.PROJECT_KEY }}/${{ secrets.FEATURE_FLAG_KEY }}" \
