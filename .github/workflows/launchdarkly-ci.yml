@@ -1,0 +1,24 @@
+name: Deploy and Toggle Feature Flag
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Deploy Application
+        run: ./deploy.sh  # Replace with your deployment script
+
+      - name: Enable Feature in LaunchDarkly
+        run: |
+          curl -X PATCH "https://app.launchdarkly.com/api/v2/flags/${{ secrets.PROJECT_KEY }}/${{ secrets.FEATURE_FLAG_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.LAUNCHDARKLY_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{"on": true}'
