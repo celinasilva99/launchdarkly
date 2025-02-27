@@ -39,7 +39,17 @@ jobs:
 
       - name: Enable Feature in LaunchDarkly
         run: |
-          curl -v -X PATCH "https://app.launchdarkly.com/api/v2/flags/$LD_PROJECT_KEY/$LD_FEATURE_FLAG_KEY" \
-          -H "Authorization: Bearer $LD_ACCESS_TOKEN" \
+          response=$(curl -X PATCH -s -o response.json -w "%{http_code}" \
+          "https://app.launchdarkly.com/api/v2/flags/${{ secrets.PROJECT_KEY }}/${{ secrets.FEATURE_FLAG_KEY }}" \
+          -H "Authorization: $LD_ACCESS_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{"on": true}')
+    
+        echo "Response Code: $response"
+          echo "Response Body:"
+          cat response.json
+         env:
+    LD_ACCESS_TOKEN: ${{ secrets.LAUNCHDARKLY_API_KEY }}
+
           -H "Content-Type: application/json" \
           -d '{"on": true}'
