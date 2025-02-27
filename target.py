@@ -6,17 +6,20 @@ from flask_socketio import SocketIO
 import threading
 import time
 import requests
-
+from dotenv import load_dotenv, dotenv_values
+import os
 # Initialize Flask app and WebSocket support
 app = Flask(__name__)
 app.secret_key = '8e5acb07c20c16c6b410c0d8fd7e71c1'
 socketio = SocketIO(app)
+load_dotenv()
 
 # LaunchDarkly setup
-LD_SDK_KEY = "sdk-07570192-cfd4-40ff-97ae-ae8a420bc6b8"
-FEATURE_FLAG_KEY = "promo-banner"
-LD_API_KEY = "api-02b52e02-600d-4358-a11d-2342855d918d"
-PROJECT_KEY = "default"
+LD_SDK_KEY = os.getenv("LD_SDK_KEY")
+FEATURE_FLAG_KEY = os.getenv("FEATURE_FLAG_KEY_1")
+LD_API_KEY = os.getenv("LD_API_KEY")
+PROJECT_KEY = os.getenv("PROJECT_KEY")
+ENVIRONMENT_KEY = os.getenv("ENVIRONMENT_KEY")
 
 ldclient.set_config(Config(LD_SDK_KEY))
 client = ldclient.get()
@@ -97,11 +100,11 @@ def track_conversion():
 def remediate_promo():
     """Disables the promo feature flag instantly."""
     headers = {
-        "Authorization": "api-02b52e02-600d-4358-a11d-2342855d918d",
+        "Authorization": "LD_API_KEY",
         "Content-Type": "application/json"
     }
     data = [
-        {"op": "replace", "path": f"/environments/launch-darkly-project/on", "value": False}
+        {"op": "replace", "path": f"/environments/{ENVIRONMENT_KEY}/on", "value": False}
     ]
     url = f"https://app.launchdarkly.com/api/v2/flags/{PROJECT_KEY}/{FEATURE_FLAG_KEY}"
     response = requests.patch(url, headers=headers, json=data)
