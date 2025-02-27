@@ -20,7 +20,7 @@ jobs:
         run: |
           echo "LD_PROJECT_KEY=${{ secrets.PROJECT_KEY }}" >> $GITHUB_ENV
           echo "LD_FEATURE_FLAG_KEY=${{ secrets.FEATURE_FLAG_KEY }}" >> $GITHUB_ENV
-          echo "LD_ACCESS_TOKEN: ${{ secrets.LAUNCHDARKLY_API_KEY }}" >> $GITHUB_ENV
+          echo "LD_ACCESS_TOKEN=${{ secrets.LAUNCHDARKLY_API_KEY }}" >> $GITHUB_ENV
 
       - name: Deploy the application
         run: ./deploy.sh
