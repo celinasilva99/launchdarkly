@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protect Your Business with Cybersecurity</title>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f5f5f5; /* Light grey background */
+            color: #2d3436; /* Dark grey text */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #ffffff; /* White container for contrast */
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 700px;
+            margin-top: 20px;
+        }
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2d3436;
+        }
+        #feature-section {
+            display: none;
+            padding: 20px;
+            background: #c5e1a5; /* Earthy green for a calming effect */
+            border-radius: 8px;
+            margin-top: 30px;
+            color: #2d3436;
+            font-weight: bold;
+        }
+        .btn {
+            padding: 12px 30px;
+            margin-top: 25px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .btn-primary {
+            background: #7b9f6a; /* Subtle earthy green */
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #6a8d5a;
+        }
+        .btn-danger {
+            background: #d9a695; /* Soft earthy peach */
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c88e81;
+        }
+        .icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            color: #2d3436;
+        }
+        p {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #333333;
+        }
+        .testimonials {
+            margin-top: 40px;
+            font-style: italic;
+        }
+        .testimonial {
+            background: #f4f4f4; /* Light grey background for testimonials */
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #2d3436;
+        }
+        .trust-badges img {
+            width: 100px;
+            margin: 15px 10px;
+        }
+    </style>
+    <script>
+        var socket = io();
+
+        socket.on('flag_update', function(data) {
+            console.log("Feature flag updated:", data.enabled);
+            var featureSection = document.getElementById("feature-section");
+            if (data.enabled) {
+                featureSection.style.display = "block";
+                document.getElementById("status").innerText = "Promo Feature is ENABLED! Protect Your Business Now!";
+            } else {
+                featureSection.style.display = "none";
+                document.getElementById("status").innerText = "Promo Feature is DISABLED";
+            }
+        });
+
+        function remediateFeature() {
+            fetch('/remediate_promo', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Remediation response:", data);
+                    alert(data.status);
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        function trackClick() {
+            fetch('/track_click', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => console.log("Click tracked:", data))
+                .catch(error => console.error("Error:", error));
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <i class="icon">&#128187;</i> <!-- Icon for technology/security -->
+        <h1>ABC Cybersecurity</h1>
+        <p id="status">Checking feature status...</p>
+        <div id="feature-section">
+            <h2>Ready to simplify cybersecurity with cloud-delivered protection?</h2>
+            <p>Know your attack surface, reduce risks, and fix security gaps.</p>
+            <button class="btn btn-primary" onclick="trackClick()">Request Demo</button>
+        </div>
+        <button class="btn btn-danger" onclick="remediateFeature()">Disable Promo Feature</button>
+        
+        <!-- Trust Badges -->
+        <div class="trust-badges">
+            <h3>Trusted By Leading Companies</h3>
+            <img src="https://cdn.freebiesupply.com/logos/large/2x/iso-2-1-logo-png-transparent.png" alt="ISO Certification">
+            <img src="https://www.loginradius.com/wp-content/uploads/2019/10/PNG_GDPR-e1672263252689.png" alt="GDPR Compliance">
+            <img src="https://www.iosys.co.uk/images/ssl-certificates-secure-standard.png" alt="SSL Secured">
+        </div>
+
+        <!-- Testimonials Section -->
+        <div class="testimonials">
+            <h3>What Our Clients Say</h3>
+            <div class="testimonial">
+                <p>"ABC Cybersecurity has been a game-changer for our business. Their protection solutions gave us peace of mind and helped secure our sensitive data!"</p>
+                <p><strong>- Sarah T., CEO, TechX Innovations</strong></p>
+            </div>
+            <div class="testimonial">
+                <p>"Thanks to ABC Cybersecurity, we’ve managed to prevent cyberattacks that could’ve cost us millions. Their service is reliable and top-notch!"</p>
+                <p><strong>- James L., CTO, SecureCorp</strong></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
