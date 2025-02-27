@@ -8,6 +8,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      LD_ACCESS_TOKEN: ${{ secrets.LAUNCHDARKLY_API_KEY }}
+      LD_PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
+      LD_FEATURE_FLAG_KEY: ${{ secrets.FEATURE_FLAG_KEY }}
 
     steps:
       - name: Checkout Code
@@ -16,27 +20,26 @@ jobs:
       - name: Grant execution permission for deploy.sh
         run: chmod +x deploy.sh
 
-      - name: Set up environment variables
+      - name: Debug Environment Variables
         run: |
-          echo "LD_PROJECT_KEY=${{ secrets.PROJECT_KEY }}" >> $GITHUB_ENV
-          echo "LD_FEATURE_FLAG_KEY=${{ secrets.FEATURE_FLAG_KEY }}" >> $GITHUB_ENV
-          echo "LD_ACCESS_TOKEN=${{ secrets.LAUNCHDARKLY_API_KEY }}" >> $GITHUB_ENV
+          echo "LD_ACCESS_TOKEN is set"
+          echo "LD_ACCESS_TOKEN starts with: $(echo $LD_ACCESS_TOKEN | cut -c1-5)****"
 
-      - name: Test LaunchDarkly API Key
+      - name: Check if Secrets are Empty
         run: |
-          echo "LAUNCHDARKLY_API_KEY is set"
-          echo "Token length: ${#LD_ACCESS_TOKEN}"  # Corrected to reference the environment variable
+          if [[ -z "$LD_ACCESS_TOKEN" ]]; then
+            echo "LD_ACCESS_TOKEN is EMPTY!"
+            exit 1
+          else
+            echo "LD_ACCESS_TOKEN is set."
+          fi
 
       - name: Deploy the application
         run: ./deploy.sh
-        env:
-          LD_ACCESS_TOKEN: ${{ secrets.LAUNCHDARKLY_API_KEY }}
-          LD_PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
-          LD_FEATURE_FLAG_KEY: ${{ secrets.FEATURE_FLAG_KEY }}
 
       - name: Enable Feature in LaunchDarkly
         run: |
-          curl -X PATCH "https://app.launchdarkly.com/api/v2/flags/${{ secrets.PROJECT_KEY }}/${{ secrets.FEATURE_FLAG_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.LAUNCHDARKLY_API_KEY }}" \
+          curl -v -X PATCH "https://app.launchdarkly.com/api/v2/flags/$LD_PROJECT_KEY/$LD_FEATURE_FLAG_KEY" \
+          -H "Authorization: Bearer $LD_ACCESS_TOKEN" \
           -H "Content-Type: application/json" \
           -d '{"on": true}'
