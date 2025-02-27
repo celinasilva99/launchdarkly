@@ -25,9 +25,7 @@ jobs:
       - name: Test LaunchDarkly API Key
         run: |
           echo "LAUNCHDARKLY_API_KEY is set"
-          echo "Token length: ${#secrets.LAUNCHDARKLY_API_KEY}"  # This will print the length of the secret
-
-
+          echo "Token length: ${#LD_ACCESS_TOKEN}"  # Corrected to reference the environment variable
 
       - name: Deploy the application
         run: ./deploy.sh
@@ -38,8 +36,7 @@ jobs:
 
       - name: Enable Feature in LaunchDarkly
         run: |
-          curl -X PATCH "https://app.launchdarkly.com/api/v2/flags/default/promo-banner" \
-          -H "Authorization: Bearer api-44d8a3d3-7a63-4423-b1f2-64ffed2a5fcf" \
+          curl -X PATCH "https://app.launchdarkly.com/api/v2/flags/${{ secrets.PROJECT_KEY }}/${{ secrets.FEATURE_FLAG_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.LAUNCHDARKLY_API_KEY }}" \
           -H "Content-Type: application/json" \
           -d '{"on": true}'
-
