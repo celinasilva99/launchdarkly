@@ -1,55 +1,20 @@
-name: Deploy and Toggle Feature Flag
-
-on:
-  push:
-    branches:
-      - main
+name: Find LaunchDarkly flag code references
+on: push
+# cancel in-flight workflow run if another push was triggered
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
 
 jobs:
-  deploy:
+  launchDarklyCodeReferences:
+    name: LaunchDarkly Code References
     runs-on: ubuntu-latest
-    env:
-      LD_ACCESS_TOKEN: ${{ secrets.LAUNCHDARKLY_API_KEY }}
-      LD_PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
-      LD_FEATURE_FLAG_KEY: ${{ secrets.FEATURE_FLAG_KEY }}
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 11 # This value must be set if the lookback configuration option is not disabled for find-code-references. Read more: https://github.com/launchdarkly/ld-find-code-refs#searching-for-unused-flags-extinctions
+    - name: LaunchDarkly Code References
+      uses: launchdarkly/find-code-references@v2
+      with:
+        accessToken: ${{ secrets.LD_ACCESS_TOKEN }}
 
-      - name: Grant execution permission for deploy.sh
-        run: chmod +x deploy.sh
-
-      - name: Debug Environment Variables
-        run: |
-          echo "LD_ACCESS_TOKEN is set"
-          echo "LD_ACCESS_TOKEN starts with: $(echo $LD_ACCESS_TOKEN | cut -c1-5)****"
-
-      - name: Check if Secrets are Empty
-        run: |
-          if [[ -z "$LD_ACCESS_TOKEN" ]]; then
-            echo "LD_ACCESS_TOKEN is EMPTY!"
-            exit 1
-          else
-            echo "LD_ACCESS_TOKEN is set."
-          fi
-
-      - name: Deploy the application
-        run: ./deploy.sh
-
-      - name: Enable Feature in LaunchDarkly
-        run: |
-          response=$(curl -X PATCH -s -o response.json -w "%{http_code}" \
-          "https://app.launchdarkly.com/api/v2/flags/${{ secrets.PROJECT_KEY }}/${{ secrets.FEATURE_FLAG_KEY }}" \
-          -H "Authorization: $LD_ACCESS_TOKEN" \
-          -H "Content-Type: application/json" \
-          -d '{"on": true}')
-    
-        echo "Response Code: $response"
-          echo "Response Body:"
-          cat response.json
-         env:
-    LD_ACCESS_TOKEN: ${{ secrets.LAUNCHDARKLY_API_KEY }}
-
-          -H "Content-Type: application/json" \
-          -d '{"on": true}'
