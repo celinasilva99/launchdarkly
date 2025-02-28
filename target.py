@@ -15,9 +15,9 @@ app.secret_key = '8e5acb07c20c16c6b410c0d8fd7e71c1'
 socketio = SocketIO(app)
 load_dotenv()
 
-# LaunchDarkly promo-banner flag setup
+# flag: promo-banner
 LD_SDK_KEY = os.getenv("LD_SDK_KEY")
-FEATURE_FLAG_KEY = os.getenv("FEATURE_FLAG_KEY_1") # launchdarkly:promo-banner
+FEATURE_FLAG_KEY = os.getenv("FEATURE_FLAG_KEY_1") 
 LD_API_KEY = os.getenv("LD_API_KEY")
 PROJECT_KEY = os.getenv("PROJECT_KEY")
 ENVIRONMENT_KEY = os.getenv("ENVIRONMENT_KEY")
