@@ -16,7 +16,7 @@ load_dotenv()
 
 # LaunchDarkly setup
 LD_SDK_KEY = os.getenv("LD_SDK_KEY")
-FEATURE_FLAG_KEY = os.getenv("FEATURE_FLAG_KEY_2")
+FEATURE_FLAG_KEY = os.getenv("FEATURE_FLAG_KEY_2")  # launchdarkly:promo-banner
 LD_API_KEY = os.getenv("LD_API_KEY")
 PROJECT_KEY = os.getenv("PROJECT_KEY")
 ENVIRONMENT_KEY = os.getenv("ENVIRONMENT_KEY")
