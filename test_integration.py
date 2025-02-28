@@ -15,13 +15,11 @@ app.secret_key = '8e5acb07c20c16c6b410c0d8fd7e71c1'
 socketio = SocketIO(app)
 load_dotenv()
 
-# flag: feature_2.0
-LD_SDK_KEY = "sdk-07570192-cfd4-40ff-97ae-ae8a420bc6b8"
-FEATURE_FLAG_KEY_1 = "feature_2.0"
-LD_API_KEY = "api-02b52e02-600d-4358-a11d-2342855d918d"
-PROJECT_KEY = "default"
-ENVIRONMENT_KEY = "launch-darkly-project"
 
+LD_SDK_KEY = os.getenv("LD_SDK_KEY")
+LD_API_KEY = os.getenv("LD_API_KEY")
+PROJECT_KEY = os.getenv("PROJECT_KEY")
+ENVIRONMENT_KEY = os.getenv("ENVIRONMENT_KEY")
 
 ldclient.set_config(Config(LD_SDK_KEY))
 client = ldclient.get()
