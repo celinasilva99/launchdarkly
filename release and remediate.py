@@ -8,6 +8,7 @@ import time
 import requests
 from dotenv import load_dotenv, dotenv_values
 import os
+
 # Initialize Flask app and WebSocket support
 app = Flask(__name__)
 app.secret_key = '8e5acb07c20c16c6b410c0d8fd7e71c1'
@@ -16,7 +17,7 @@ load_dotenv()
 
 # LaunchDarkly setup
 LD_SDK_KEY = os.getenv("LD_SDK_KEY")
-FEATURE_FLAG_KEY = os.getenv("FEATURE_FLAG_KEY_2")  # launchdarkly:promo-banner
+FEATURE_FLAG_KEY = os.getenv("FEATURE_FLAG_KEY_2")  # launchdarkly:feature_2.0
 LD_API_KEY = os.getenv("LD_API_KEY")
 PROJECT_KEY = os.getenv("PROJECT_KEY")
 ENVIRONMENT_KEY = os.getenv("ENVIRONMENT_KEY")
@@ -29,7 +30,7 @@ if client.is_initialized():
 else:
     print("LaunchDarkly client failed to initialize.")
 
-# Function to check feature flag in real-time
+# Function to feature_2.0 in real-time
 def flag_listener():
     context = Context.builder("context-key-123abc").name("Sandy").build()
     current_flag_value = client.variation(FEATURE_FLAG_KEY, context, False)
@@ -41,7 +42,7 @@ def flag_listener():
             socketio.emit('flag_update', {'enabled': new_flag_value})
             current_flag_value = new_flag_value
 
-# Start the flag listener in a separate thread
+# Start the feature_2.0 listener in a separate thread
 thread = threading.Thread(target=flag_listener, daemon=True)
 thread.start()
 
@@ -58,7 +59,7 @@ def handle_connect():
 
 @app.route('/remediate', methods=['POST'])
 def remediate():
-    """Disables the feature flag instantly."""
+    """Disables feature_2.0 flag instantly."""
     headers = {
     "Authorization": LD_API_KEY,
     "Content-Type": "application/json"
@@ -74,11 +75,11 @@ def remediate():
 
 
     if response.status_code == 200:
-        print("Feature flag disabled successfully.")
+        print("Feature_2.0 flag disabled successfully.")
         socketio.emit('flag_update', {'enabled': False})
-        return jsonify({"status": "Feature Disabled"}), 200
+        return jsonify({"status": "Feature_2.0 Disabled"}), 200
     else:
-        print("Failed to disable feature flag.", response.text)
+        print("Failed to disable feature_2.0 flag.", response.text)
         return jsonify({"status": "Failed", "error": response.text}), 500
 
 if __name__ == '__main__':

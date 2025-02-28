@@ -8,15 +8,16 @@ import time
 import requests
 from dotenv import load_dotenv, dotenv_values
 import os
+
 # Initialize Flask app and WebSocket support
 app = Flask(__name__)
 app.secret_key = '8e5acb07c20c16c6b410c0d8fd7e71c1'
 socketio = SocketIO(app)
 load_dotenv()
 
-# LaunchDarkly setup
+# LaunchDarkly promo-banner flag setup
 LD_SDK_KEY = os.getenv("LD_SDK_KEY")
-FEATURE_FLAG_KEY = os.getenv("FEATURE_FLAG_KEY_1") # launchdarkly:feature_2.0
+FEATURE_FLAG_KEY = os.getenv("FEATURE_FLAG_KEY_1") # launchdarkly:promo-banner
 LD_API_KEY = os.getenv("LD_API_KEY")
 PROJECT_KEY = os.getenv("PROJECT_KEY")
 ENVIRONMENT_KEY = os.getenv("ENVIRONMENT_KEY")
@@ -36,8 +37,8 @@ def get_context(user_key, role, location, subscription_status,email):
         .set("subscription_status", subscription_status) \
         .set("email", email)\
         .build()
-# Function to check feature flag in real-time
-# Function to check feature flag in real-time
+
+# Function to check promo-banner flag in real-time
 def flag_listener():
     user_context = get_context("Chiarra", "premium_user", "US", "active","chiarra@abc.com")
     current_flag_value = client.variation(FEATURE_FLAG_KEY, user_context, False)
@@ -49,7 +50,7 @@ def flag_listener():
             socketio.emit('flag_update', {'enabled': new_flag_value})
             current_flag_value = new_flag_value
 
-# Start the flag listener in a separate thread
+# Start the promo-banner flag listener in a separate thread
 thread = threading.Thread(target=flag_listener, daemon=True)
 thread.start()
 
@@ -98,7 +99,7 @@ def track_conversion():
 
 @app.route('/remediate_promo', methods=['POST'])
 def remediate_promo():
-    """Disables the promo feature flag instantly."""
+    """Disables the promo-banner feature flag instantly."""
     headers = {
         "Authorization": "LD_API_KEY",
         "Content-Type": "application/json"
@@ -109,11 +110,11 @@ def remediate_promo():
     url = f"https://app.launchdarkly.com/api/v2/flags/{PROJECT_KEY}/{FEATURE_FLAG_KEY}"
     response = requests.patch(url, headers=headers, json=data)
     if response.status_code == 200:
-        print("Promo feature flag disabled successfully.")
+        print("promo-banner feature flag disabled successfully.")
         socketio.emit('flag_update', {'enabled': False})
         return jsonify({"status": "Feature Disabled"}), 200
     else:
-        print("Failed to disable promo feature flag.", response.text)
+        print("Failed to disable promo-banner feature flag.", response.text)
         return jsonify({"status": "Failed", "error": response.text}), 500
 
 if __name__ == '__main__':
